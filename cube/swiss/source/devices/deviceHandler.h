@@ -181,7 +181,14 @@ typedef char* (* _fn_details)(file_handle*);
 #define DEVICE_ID_M			0x16
 #define DEVICE_ID_N			0x17
 #define DEVICE_ID_O			0x18
-#define DEVICE_ID_MAX		DEVICE_ID_O
+#define DEVICE_ID_P			0x19	/* EXT2: SD Slot A  */
+#define DEVICE_ID_Q			0x1A	/* EXT2: SD Slot B  */
+#define DEVICE_ID_R			0x1B	/* EXT2: SD SP2     */
+#define DEVICE_ID_S			0x1C	/* EXT2: ATA Slot A */
+#define DEVICE_ID_T			0x1D	/* EXT2: ATA Slot B */
+#define DEVICE_ID_U			0x1E	/* EXT2: ATA SP1/M2      */
+#define DEVICE_ID_V			0x1F	/* EXT2: GCLoader/CubeODE */
+#define DEVICE_ID_MAX		DEVICE_ID_V
 #define DEVICE_ID_UNK		(DEVICE_ID_MAX + 1)
 
 struct DEVICEHANDLER_STRUCT {
@@ -249,6 +256,7 @@ enum DEV_ERRORS {
 #include "devices/aram/deviceHandler-ARAM.h"
 #include "devices/flippydrive/deviceHandler-flippydrive.h"
 #include "devices/kunaigc/deviceHandler-KunaiGC.h"
+#include "devices/ext2/deviceHandler-EXT2.h"
 
 extern void deviceHandler_setStatEnabled(int enable);
 extern int deviceHandler_getStatEnabled();
@@ -256,7 +264,7 @@ extern bool deviceHandler_getDeviceAvailable(DEVICEHANDLER_INTERFACE *dev);
 extern void deviceHandler_setDeviceAvailable(DEVICEHANDLER_INTERFACE *dev, bool availability);
 extern void deviceHandler_setAllDevicesAvailable();
 
-#define MAX_DEVICES 26
+#define MAX_DEVICES 34
 
 extern DEVICEHANDLER_INTERFACE* allDevices[MAX_DEVICES];
 extern DEVICEHANDLER_INTERFACE* devices[MAX_DEVICE_SLOTS];
@@ -280,4 +288,3 @@ extern FILE* openFileStream(file_handle *file);
 extern void* readFileBlockAligned(file_handle *file, u32 offset, u32 length);
 
 #endif
-

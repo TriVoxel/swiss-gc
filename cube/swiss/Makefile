@@ -26,6 +26,7 @@ SOURCES		:=  source \
 			  source/devices/aram \
               source/devices/dvd \
               source/devices/fat \
+			  source/devices/ext2 \
 			  source/devices/flippydrive \
 			  source/devices/fsp \
 			  source/devices/ftp \
@@ -66,7 +67,7 @@ LDFLAGS		= $(CFLAGS) -Wl,-Map,$(notdir $@).map -T ../../linker-script/ogc.ld -T 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-ldvm -ltinysmb -lbba -laesnd -lmad -ldb -logc -ldeflate -lpsoarchive -lxxhash -lz -lm
+LIBS	:=	-lext2 -ldvm -ltinysmb -lbba -laesnd -lmad -ldb -logc -ldeflate -lpsoarchive -lxxhash -lz -lm
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing

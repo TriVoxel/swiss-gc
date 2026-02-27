@@ -235,6 +235,14 @@ int main(int argc, char *argv[])
 	allDevices[i++] = &__device_smb;
 	allDevices[i++] = &__device_ftp;
 	allDevices[i++] = &__device_fsp;
+	/* EXT2/3/4 variants of the SD and ATA devices */
+	allDevices[i++] = &__device_ext2_ata_c;
+	allDevices[i++] = &__device_ext2_sd_c;
+	allDevices[i++] = &__device_ext2_sd_a;
+	allDevices[i++] = &__device_ext2_sd_b;
+	allDevices[i++] = &__device_ext2_ata_a;
+	allDevices[i++] = &__device_ext2_ata_b;
+	allDevices[i++] = &__device_ext2_gcldr;
 	allDevices[i++] = NULL;
 	
 	// Set current devices
