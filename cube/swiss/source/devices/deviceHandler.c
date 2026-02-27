@@ -18,6 +18,8 @@
 #include "deviceHandler.h"
 #include "bba.h"
 #include "flippy.h"
+#include <ext2.h>
+#include "gcloader/gcloader.h"
 
 DEVICEHANDLER_INTERFACE* allDevices[MAX_DEVICES];	// All devices registered in Swiss
 DEVICEHANDLER_INTERFACE* devices[MAX_DEVICE_SLOTS];	// Currently used devices
@@ -218,6 +220,32 @@ const char* getHwNameByLocation(u32 location) {
 	return "Empty";
 }
 
+/* ------------------------------------------------------------------ */
+/* EXT2 fragment helper (used by getFragments for EXT2 GCLoader path) */
+/* ------------------------------------------------------------------ */
+
+typedef struct {
+	file_frag **fragList;
+	u32        *totFrags;
+	u8          fileNum;
+	u32         devNum;
+} ext2_frag_ctx;
+
+static void ext2_add_frag(u32 offset, u32 size, uint64_t abs_sector, void *ctx)
+{
+	ext2_frag_ctx *c = (ext2_frag_ctx *)ctx;
+	u32 n = *c->totFrags;
+	*c->fragList = reallocarray(*c->fragList, n + 2, sizeof(file_frag));
+	if (!*c->fragList) return;
+	(*c->fragList)[n].offset   = offset;
+	(*c->fragList)[n].size     = size;
+	(*c->fragList)[n].fileNum  = c->fileNum;
+	(*c->fragList)[n].devNum   = c->devNum;
+	(*c->fragList)[n].fileBase = abs_sector;
+	memset(&(*c->fragList)[n + 1], 0, sizeof(file_frag));
+	(*c->totFrags)++;
+}
+
 bool getFragments(int deviceSlot, file_handle *file, file_frag **fragList, u32 *totFrags, u8 fileNum, u32 forceBaseOffset, u32 forceSize) {
 	file_frag *frags = *fragList;
 	u32 numFrags = *totFrags;
@@ -302,6 +330,21 @@ bool getFragments(int deviceSlot, file_handle *file, file_frag **fragList, u32 *
 		frags[numFrags].devNum = 0;
 		frags[numFrags].fileBase = (u32)installPatch2(file->name, PATHNAME_MAX) | ((u64)PATHNAME_MAX << 32);
 		numFrags++;
+	}
+	else if(devices[deviceSlot] == &__device_ext2_gcldr) {
+		/* EXT2 on GCLoader: walk the ext2 block map via libext2 */
+		ext2_frag_ctx ctx = {
+			.fragList = &frags,
+			.totFrags = &numFrags,
+			.fileNum  = fileNum,
+			.devNum   = (deviceSlot == DEVICE_PATCHES) ? 1 : 0,
+		};
+		if(!EXT2_GetFragments(file->name, ext2_add_frag, &ctx,
+		                      forceBaseOffset, forceSize,
+		                      MAX_GCLOADER_FRAGS_PER_DISC)) {
+			return false;
+		}
+		file->status = STATUS_HAS_MAPPING;
 	}
 	else {
 		frags = reallocarray(frags, numFrags + 2, sizeof(file_frag));

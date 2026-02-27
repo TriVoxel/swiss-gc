@@ -13,5 +13,6 @@ extern DEVICEHANDLER_INTERFACE __device_gcloader;
 
 bool gcloaderGetBootFile(file_handle* file);
 bool deviceHandler_GCLoader_test(void);
+u32  deviceHandler_GCLoader_emulated(void);
 
 #endif

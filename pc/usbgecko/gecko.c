@@ -46,7 +46,7 @@ DWORD RxSent;
 int returnvalue;
 #endif
 
-int gecko_open (const char *dev) {
+int gecko_open (const char *dev __attribute__((unused))) {
 #ifndef __WIN32__
 	struct termios newtio;
 
@@ -86,33 +86,33 @@ int gecko_open (const char *dev) {
 	// Reset device			
 	status = FT_ResetDevice(fthandle);
 	if(status != FT_OK) {
-		printf("Error: Couldnt Reset Device %d\n",status);
+		printf("Error: Couldnt Reset Device %lu\n",status);
 		FT_Close(fthandle);
 		exit(0);
 	}
 
 	status = FT_SetTimeouts(fthandle,0,0);	// 0 Second Timeout
 	if(status != FT_OK) {
-		printf("Error: Timeouts failed to set %d\n",status);
+		printf("Error: Timeouts failed to set %lu\n",status);
 		FT_Close(fthandle);
 		exit(0);
 	}	
 	// Purge buffers		
 	status = FT_Purge(fthandle,FT_PURGE_RX);
 	if(status != FT_OK)	{
-		printf("Error: Problem clearing buffers %d\n",status);
+		printf("Error: Problem clearing buffers %lu\n",status);
 		FT_Close(fthandle);
 		exit(0);
 	}
 	status = FT_Purge(fthandle,FT_PURGE_TX);
 	if(status != FT_OK) {
-		printf("Error: Problem clearing buffers %d\n",status);
+		printf("Error: Problem clearing buffers %lu\n",status);
 		FT_Close(fthandle);
 		exit(0);
 	}
 	status = FT_SetUSBParameters(fthandle,65536,0);	// Set to 64K packet size (USB 2.0 Max)
 	if(status != FT_OK)	{
-		printf("Error: Couldnt Set USB Parameters %d\n",status);
+		printf("Error: Couldnt Set USB Parameters %lu\n",status);
 		FT_Close(fthandle);
 		exit(0);
 	}
@@ -240,4 +240,3 @@ int gecko_write (void *buf, size_t count) {
 #endif
 	return 0;
 }
-

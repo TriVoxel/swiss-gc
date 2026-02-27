@@ -139,7 +139,7 @@ void cache_path() {
 			memset(path,0,4096);
 			sprintf(path, "%s/%s",curPath,ent->d_name);
 			stat(path, &fstat);
-			printf ("%s %i [%s]\n", ent->d_name, fstat.st_size, S_ISDIR(fstat.st_mode) ? "DIR":"FILE");
+			printf ("%s %li [%s]\n", ent->d_name, (long)fstat.st_size, S_ISDIR(fstat.st_mode) ? "DIR":"FILE");
 			memset(&cached_files[cached_files_num],0,sizeof(file_handle));
 			sprintf(&cached_files[cached_files_num].name[0],"%s",path);
 			cached_files[cached_files_num].size = fstat.st_size;
@@ -168,7 +168,7 @@ void send_file_data(usb_data_req *req) {
 	
 }
 
-int main (int argc, char **argv) {
+int main (int argc __attribute__((unused)), char **argv __attribute__((unused))) {
        
         printf ("swissserver " SWISSSERVER_VERSION "\n"
                 "coded by emu_kidid for Swiss + USB Gecko\n\n");
@@ -280,4 +280,3 @@ int main (int argc, char **argv) {
 
         return 0;
 }
-
